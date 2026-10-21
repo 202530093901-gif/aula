@@ -1,86 +1,60 @@
-const URL = "https://yzgrsszkievjzalcfnzc.supabase.co";
 
-const KEY = "sb_publishable_ECLRLkVa2R79loAMKvQjSw_c6E2So0v";
+const URL = "https://uqqbqsrldydbuiimzyfk.supabase.co";
 
+const KEY = "sb_publishable_k7qTjmFn6lgEWpxUXgLL3A_M2T8ZlJX";
 
 // SALVAR PRODUTO
 async function salvar() {
+    const campoNome = document.getElementById("nome");
+    const mensagem = document.getElementById("mensagem");
 
-    const nome = document.getElementById("nome").value;
+    const nome = campoNome.value.trim();
 
     if (nome === "") {
-        alert("Digite o nome do produto!");
+        mensagem.innerText = "Digite o nome do produto!";
         return;
     }
 
-    const resposta = await fetch(
-        URL + "/rest/v1/produtos",
-        {
-            method: "POST",
+    try {
+        const resposta = await fetch(
+            URL + "/rest/v1/produtos",
+            {
+                method: "POST",
+                headers: {
+                    "apikey": KEY,
+                    "Authorization": "Bearer " + KEY,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nome: nome
+                })
+            }
+        );
 
-            headers: {
-                "apikey": KEY,
-                "Authorization": "Bearer " + KEY,
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                nome: nome
-            })
+        if (resposta.ok) {
+            mensagem.innerText = "Produto salvo!";
+            campoNome.value = "";
+        } else {
+            const erro = await resposta.text();
+            console.error(erro);
+            mensagem.innerText = "Erro ao salvar produto.";
         }
-    );
-
-    if (resposta.ok) {
-
-        document.getElementById("mensagem").innerText =
-            "Produto salvo!";
-
-        document.getElementById("nome").value = "";
-
-        listarProdutos();
-
-    } else {
-
-        document.getElementById("mensagem").innerText =
-            "Erro ao salvar.";
-
+    } catch (erro) {
+        console.error(erro);
+        mensagem.innerText = "Erro de conexão com o Supabase.";
     }
 }
 
-
-// LISTAR PRODUTOS
-async function listarProdutos() {
-
-    const resposta = await fetch(
-        URL + "/rest/v1/produtos?select=*",
-        {
-            method: "GET",
-
-            headers: {
-                "apikey": KEY,
-                "Authorization": "Bearer " + KEY
-            }
-        }
-    );
-
-    const produtos = await resposta.json();
-
+// NÃO LISTAR PRODUTOS CADASTRADOS
+function listarProdutos() {
     const lista = document.getElementById("lista");
 
-    lista.innerHTML = "";
-
-    produtos.forEach(produto => {
-
-        const item = document.createElement("li");
-
-        item.innerText =
-            produto.id + " - " + produto.nome;
-
-        lista.appendChild(item);
-
-    });
+    if (lista) {
+        lista.innerHTML = "";
+        lista.style.display = "none";
+    }
 }
 
-
-// CARREGAR PRODUTOS AO ABRIR A PÁGINA
+// NÃO CARREGAR PRODUTOS AO ABRIR A PÁGINA
 listarProdutos();
+
