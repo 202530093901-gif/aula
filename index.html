@@ -1,31 +1,76 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
-    <title>Loja de Roupas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja de Roupas | Cadastro</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <h1>Loja de Roupas</h1>
+    <header>
+        <h1>Loja de Roupas</h1>
+        <p>Cadastre suas peças com facilidade</p>
+    </header>
 
-    <h2>Cadastrar produto</h2>
+    <main>
+        <section class="formulario">
+            <h2>Cadastrar novo produto</h2>
 
-    <input id="nome" placeholder="Nome do produto">
+            <form id="formProduto">
 
-    <button onclick="salvar()">
-        Salvar
-    </button>
+                <label for="nome">Nome da roupa</label>
+                <input
+                    type="text"
+                    id="nome"
+                    placeholder="Ex.: Camiseta preta"
+                    required
+                >
 
-    <p id="mensagem"></p>
+                <label for="preco">Preço (R$)</label>
+                <input
+                    type="number"
+                    id="preco"
+                    placeholder="Ex.: 89.90"
+                    min="0"
+                    step="0.01"
+                    required
+                >
 
-    <h2>Produtos cadastrados</h2>
+                <label for="imagem">URL da imagem</label>
+                <input
+                    type="url"
+                    id="imagem"
+                    placeholder="https://..."
+                    required
+                >
 
-    <ul id="lista"></ul>
+                <label for="descricao">Descrição</label>
+                <textarea
+                    id="descricao"
+                    placeholder="Descreva a roupa, cor, tecido e tamanho..."
+                    rows="4"
+                    required
+                ></textarea>
+
+                <button type="submit" id="botaoSalvar">
+                    Salvar produto
+                </button>
+
+                <p id="mensagem" role="status" aria-live="polite"></p>
+
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>Loja de Roupas</p>
+    </footer>
 
     <script src="script.js"></script>
 
 </body>
-
 </html>
+
