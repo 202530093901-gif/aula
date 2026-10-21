@@ -1,51 +1,74 @@
 
 const URL = "https://uqqbqsrldydbuiimzyfk.supabase.co";
-
 const KEY = "sb_publishable_k7qTjmFn6lgEWpxUXgLL3A_M2T8ZlJX";
 
-// SALVAR PRODUTO
-async function salvar() {
-    const campoNome = document.getElementById("nome");
+// CADASTRAR NOVO PRODUTO
+async function salvar(evento) {
+    if (evento) evento.preventDefault();
+
+    const nome = document.getElementById("nome").value.trim();
+    const precoTexto = document.getElementById("preco").value;
+    const imagem = document.getElementById("imagem").value.trim();
+    const descricao = document.getElementById("descricao").value.trim();
     const mensagem = document.getElementById("mensagem");
+    const botao = document.getElementById("botaoSalvar");
 
-    const nome = campoNome.value.trim();
+    const preco = Number(precoTexto);
 
-    if (nome === "") {
-        mensagem.innerText = "Digite o nome do produto!";
+    if (
+        !nome ||
+        precoTexto === "" ||
+        !Number.isFinite(preco) ||
+        preco < 0 ||
+        !imagem ||
+        !descricao
+    ) {
+        mensagem.textContent = "Preencha todos os campos corretamente.";
         return;
     }
 
-    try {
-        const resposta = await fetch(
-            URL + "/rest/v1/produtos",
-            {
-                method: "POST",
-                headers: {
-                    "apikey": KEY,
-                    "Authorization": "Bearer " + KEY,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    nome: nome
-                })
-            }
-        );
+    if (botao) botao.disabled = true;
+    mensagem.textContent = "Salvando produto...";
 
-        if (resposta.ok) {
-            mensagem.innerText = "Produto salvo!";
-            campoNome.value = "";
-        } else {
+    try {
+        const resposta = await fetch(`${URL}/rest/v1/produtos`, {
+            method: "POST",
+            headers: {
+                "apikey": KEY,
+                "Authorization": `Bearer ${KEY}`,
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal"
+            },
+            body: JSON.stringify({
+                nome: nome,
+                preco: preco,
+                imagem: imagem,
+                descricao: descricao
+            })
+        });
+
+        if (!resposta.ok) {
             const erro = await resposta.text();
-            console.error(erro);
-            mensagem.innerText = "Erro ao salvar produto.";
+            throw new Error(erro);
         }
+
+        mensagem.textContent = "Produto cadastrado com sucesso!";
+
+        document.getElementById("nome").value = "";
+        document.getElementById("preco").value = "";
+        document.getElementById("imagem").value = "";
+        document.getElementById("descricao").value = "";
+
     } catch (erro) {
-        console.error(erro);
-        mensagem.innerText = "Erro de conexão com o Supabase.";
+        console.error("Erro ao cadastrar:", erro);
+        mensagem.textContent =
+            "Não foi possível cadastrar. Confira as colunas e permissões do Supabase.";
+    } finally {
+        if (botao) botao.disabled = false;
     }
 }
 
-// NÃO LISTAR PRODUTOS CADASTRADOS
+// NÃO MOSTRAR OS PRODUTOS CADASTRADOS
 function listarProdutos() {
     const lista = document.getElementById("lista");
 
@@ -55,6 +78,12 @@ function listarProdutos() {
     }
 }
 
-// NÃO CARREGAR PRODUTOS AO ABRIR A PÁGINA
-listarProdutos();
+// CONECTAR O FORMULÁRIO
+const formulario = document.getElementById("formProduto");
 
+if (formulario) {
+    formulario.addEventListener("submit", salvar);
+}
+
+// NÃO CARREGAR PRODUTOS ANTIGOS
+listarProdutos();
