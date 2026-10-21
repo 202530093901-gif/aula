@@ -60,9 +60,9 @@ async function salvar(evento) {
         document.getElementById("descricao").value = "";
 
     } catch (erro) {
-        console.error("Erro ao cadastrar:", erro);
-        mensagem.textContent =
-            "Não foi possível cadastrar. Confira as colunas e permissões do Supabase.";
+    console.error("Erro ao cadastrar:", erro);
+    mensagem.textContent = "Erro: " + erro.message;
+}
     } finally {
         if (botao) botao.disabled = false;
     }
