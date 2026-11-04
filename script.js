@@ -68,82 +68,38 @@ async function salvar(evento) {
     }
 }
 
-// NÃO MOSTRAR OS PRODUTOS CADASTRADOS
-// LISTAR PRODUTOS CADASTRADOS
+// LISTAR PRODUTOS
 async function listarProdutos() {
+
+    const resposta = await fetch(
+        URL + "/rest/v1/produtos?select=*",
+        {
+            method: "GET",
+
+            headers: {
+                "apikey": KEY,
+                "Authorization": "Bearer " + KEY
+            }
+        }
+    );
+
+    const produtos = await resposta.json();
+
     const lista = document.getElementById("lista");
 
-    if (!lista) return;
+    lista.innerHTML = "";
 
-    lista.innerHTML = "<p>Carregando produtos...</p>";
-    lista.style.display = "block";
+    produtos.forEach(produto => {
 
-    try {
-        const resposta = await fetch(
-            `${URL}/rest/v1/produtos?select=*&order=id.desc`,
-            {
-                method: "GET",
-                headers: {
-                    "apikey": KEY,
-                    "Authorization": `Bearer ${KEY}`,
-                    "Content-Type": "application/json"
-                }
-            }
-        );
+        const item = document.createElement("li");
 
-        if (!resposta.ok) {
-            const erro = await resposta.text();
-            throw new Error(erro);
-        }
+        item.innerText =
+            produto.id + " - " + produto.nome + " " + produto.preco + "  " + produto.descricao + " - " + produto.imagem;
 
-        const produtos = await resposta.json();
+        lista.appendChild(item);
 
-        lista.innerHTML = "";
-
-        if (produtos.length === 0) {
-            lista.innerHTML = "<p>Nenhum produto cadastrado.</p>";
-            return;
-        }
-
-        produtos.forEach(produto => {
-            const item = document.createElement("div");
-
-            item.className = "produto";
-
-            const nome = document.createElement("h3");
-            nome.textContent = produto.nome;
-
-            const preco = document.createElement("p");
-            preco.textContent = Number(produto.preco).toLocaleString(
-                "pt-BR",
-                {
-                    style: "currency",
-                    currency: "BRL"
-                }
-            );
-
-            const descricao = document.createElement("p");
-            descricao.textContent = produto.descricao;
-
-            const imagem = document.createElement("img");
-            imagem.src = produto.imagem;
-            imagem.alt = produto.nome;
-            imagem.style.maxWidth = "200px";
-
-            item.appendChild(imagem);
-            item.appendChild(nome);
-            item.appendChild(preco);
-            item.appendChild(descricao);
-
-            lista.appendChild(item);
-        });
-
-    } catch (erro) {
-        console.error("Erro ao listar produtos:", erro);
-        lista.innerHTML = "<p>Erro ao carregar produtos.</p>";
-    }
+    });
 }
-
 // CONECTAR O FORMULÁRIO
 const formulario = document.getElementById("formProduto");
 
