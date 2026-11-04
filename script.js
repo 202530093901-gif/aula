@@ -1,7 +1,7 @@
 
-const URL = "https://uqqbqsrldydbuiimzyfk.supabase.co";
-const KEY = "sb_publishable_k7qTjmFn6lgEWpxUXgLL3A_M2T8ZlJX";
-
+const URL = "https://yzgrsszkievjzalcfnzc.supabase.co";
+const KEY = "sb_publishable_ECLRLkVa2R79loAMKvQjSw_c6E2So0v";
+  
 // CADASTRAR NOVO PRODUTO
 async function salvar(evento) {
     if (evento) evento.preventDefault();
