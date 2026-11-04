@@ -53,6 +53,7 @@ async function salvar(evento) {
         }
 
         mensagem.textContent = "Produto cadastrado com sucesso!";
+      listarProdutos();
 
         document.getElementById("nome").value = "";
         document.getElementById("preco").value = "";
